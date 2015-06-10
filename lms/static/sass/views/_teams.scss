@@ -11,6 +11,7 @@
 
   .icon {
     font-family: "FontAwesome";
+    color: inherit;
   }
 
   %button-reset {
@@ -146,6 +147,112 @@
 
   .intro {
     @extend %t-weight4;
+  }
+
+  .card {
+    @extend .clearfix;
+    display: inline-block;
+    width: 30%;
+    margin: ($baseline/2) ($baseline/4);
+    border: 1px solid $gray-l3;
+    border-radius: 3px;
+
+    .card-core-wrapper {
+      @extend .clearfix;
+      padding: ($baseline*.75);
+    }
+
+    .card-title {
+      @extend %t-title5;
+    }
+
+    .card-description {
+      @extend %t-copy-sub1;
+      color: $gray;
+    }
+
+    .card-actions {
+
+      .action-view {
+        @extend %btn-secondary-blue-outline;
+        float: right;
+      }
+    }
+
+    .card-meta-wrapper {
+      @extend .clearfix;
+      @extend %t-copy-sub1;
+      border-top: 1px solid $gray-l3;
+      padding: ($baseline/2) ($baseline*.75);
+      background-color: $gray-l5;
+      color: $gray;
+
+      p {
+        color: $gray; // override
+      }
+    }
+
+    .meta-detail {
+      display: inline-block;
+      margin-top: ($baseline/4);
+      margin-right: ($baseline*.75);
+    }
+
+    &.square-card {
+
+      .card-description {
+        height: ($baseline*5);
+        overflow: hidden;
+      }
+
+      .card-meta-wrapper {
+
+        &.has-actions {
+          .card-meta-details,
+          .card-actions {
+            display: inline-block;
+            width: 49%;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+
+    &.list-card {
+      width: auto;
+      display: block;
+
+      .card-core-wrapper {
+        @extend %vertical-aligner;
+
+        &.has-actons {
+
+          .card-core {
+            display: inline-block;
+            width: 65%;
+          }
+
+          .card-actions {
+            display: inline-block;
+            float: right;
+            width: 30%;
+          }
+        }
+      }
+
+      .card-core {
+        display: inline-block;
+        vertical-align: middle;
+        width: 84%;
+      }
+
+      .card-actions {
+        display: inline-block;
+        vertical-align: middle;
+        width: 15%;
+      }
+    }
+
   }
 
   .create-team {
