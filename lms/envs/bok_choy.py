@@ -74,8 +74,16 @@ OPEN_ENDED_GRADING_INTERFACE['url'] = 'http://localhost:8041/'
 EDXNOTES_PUBLIC_API = 'http://localhost:8042/api/v1'
 EDXNOTES_INTERNAL_API = 'http://localhost:8042/api/v1'
 
+############################### Pipeline ########################################
+
 # Enable django-pipeline and staticfiles
 STATIC_ROOT = (TEST_ROOT / "staticfiles").abspath()
+
+# Enable asset pipeline
+# Our fork of django-pipeline uses `PIPELINE` instead of `PIPELINE_ENABLED`
+# PipelineFinder is explained here: http://django-pipeline.readthedocs.org/en/1.1.24/storages.html
+PIPELINE = True
+STATICFILES_FINDERS += ('pipeline.finders.PipelineFinder', )
 
 # Silence noisy logs
 import logging
@@ -105,9 +113,6 @@ FEATURES['ENABLE_TEAMS'] = True
 
 # Enable custom content licensing
 FEATURES['LICENSING'] = True
-
-# Unfortunately, we need to use debug mode to serve staticfiles
-DEBUG = True
 
 ########################### Entrance Exams #################################
 FEATURES['MILESTONES_APP'] = True

@@ -44,8 +44,16 @@ update_module_store_settings(
     default_store=os.environ.get('DEFAULT_STORE', 'draft'),
 )
 
+############################### Pipeline ########################################
+
 # Enable django-pipeline and staticfiles
 STATIC_ROOT = (TEST_ROOT / "staticfiles").abspath()
+
+# Enable asset pipeline
+# Our fork of django-pipeline uses `PIPELINE` instead of `PIPELINE_ENABLED`
+# PipelineFinder is explained here: http://django-pipeline.readthedocs.org/en/1.1.24/storages.html
+PIPELINE = True
+STATICFILES_FINDERS += ('pipeline.finders.PipelineFinder', )
 
 # Silence noisy logs
 import logging
@@ -79,9 +87,6 @@ FEATURES['ENABLE_VIDEO_BUMPER'] = True  # Enable video bumper in Studio settings
 
 ########################### Entrance Exams #################################
 FEATURES['ENTRANCE_EXAMS'] = True
-
-# Unfortunately, we need to use debug mode to serve staticfiles
-DEBUG = True
 
 # Point the URL used to test YouTube availability to our stub YouTube server
 YOUTUBE_PORT = 9080
