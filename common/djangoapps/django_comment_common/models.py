@@ -111,14 +111,10 @@ class Permission(models.Model):
         return self.name
 
 def all_permissions_for_user_in_course(user, course_id):
-    course_blacked_out_key = "django_comment_common.models.course_blacked_out.{}".format(course_id)
-    course_blacked_out = cache.get(course_blacked_out_key)
-    if course_blacked_out is None:
-        course = modulestore().get_course(course_id)
-        if course is None:
-            raise ItemNotFoundError(course_id)
-        course_blacked_out = not course.forum_posts_allowed
-        cache.set(course_blacked_out_key, course_blacked_out, 60)
+    course = modulestore().get_course(course_id)
+    if course is None:
+        raise ItemNotFoundError(course_id)
+    course_blacked_out = not course.forum_posts_allowed
 
     all_roles = {role.name for role in Role.objects.filter(users=user, course_id=course_id)}
     print all_roles
