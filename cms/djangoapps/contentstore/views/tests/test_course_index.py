@@ -350,7 +350,7 @@ class TestCourseOutline(CourseTestCase):
         {'ora1_advance_modules': True, 'ora1_components': True},
     )
     @ddt.unpack
-    def test_ora1_deprecated_warning(self, ora1_advance_modules, ora1_components):
+    def test_verify_ora1_deprecated_warning_message(self, ora1_advance_modules, ora1_components):
         """
         Verify ora1 deprecated warning info
         """

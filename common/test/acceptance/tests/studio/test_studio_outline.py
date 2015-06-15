@@ -1617,7 +1617,7 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
         )
         self.course_fixture.create_xblock(parent_vertical.locator, XBlockFixtureDesc('peergrading', 'Peer'))
 
-    def _verify_warning_info(self, remove_text_state, components_state, components_display_name_list=None):
+    def _verify_deprecation_warning_info(self, remove_text_state, components_state, components_display_name_list=None):
         """
         Verify ORA1 deprecation warning
 
@@ -1637,7 +1637,7 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
             self.assertEqual(self.course_outline_page.ora1_components_list_heading, self.COMPONENT_LIST_HEADING)
             self.assertEqual(self.course_outline_page.ora1_components_display_names, components_display_name_list)
 
-    def test_no_warning(self):
+    def test_no_deprecation_warning_message_present(self):
         """
         Scenario: Verify that ORA1 deprecation warning message is not shown if ORA1 advance modules are not present and
                   also no ORA1 component exist in course outline.
@@ -1648,7 +1648,7 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
         self.course_outline_page.visit()
         self.assertFalse(self.course_outline_page.ora1_deprecated_warning_visible)
 
-    def test_warning(self):
+    def test_deprectaion_warning_message_present(self):
         """
         Scenario: Verify ORA1 deprecation warning message if ORA1 advance modules and ORA1 components are present.
 
@@ -1663,7 +1663,7 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
         self._add_ora1_advance_modules()
         self._install_ora1_components()
         self.course_outline_page.visit()
-        self._verify_warning_info(
+        self._verify_deprecation_warning_info(
             remove_text_state=True,
             components_state=True,
             components_display_name_list=['Open', 'Peer']
@@ -1683,7 +1683,7 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
         """
         self._add_ora1_advance_modules()
         self.course_outline_page.visit()
-        self._verify_warning_info(
+        self._verify_deprecation_warning_info(
             remove_text_state=True,
             components_state=False
         )
@@ -1697,12 +1697,12 @@ class ORA1DeprecationWarningMessageTest(CourseOutlineTest):
         When I goto course outline
         Then I see ORA1 deprecated warning
         And I see correct ORA1 deprecated warning heading text
-        And I don't ORA1 deprecated warning advance modules remove text
+        And I don't see ORA1 deprecated warning advance modules remove text
         And I see list of ORA1 components with correct display names
         """
         self._install_ora1_components()
         self.course_outline_page.visit()
-        self._verify_warning_info(
+        self._verify_deprecation_warning_info(
             remove_text_state=False,
             components_state=True,
             components_display_name_list=['Open', 'Peer']

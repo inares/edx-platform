@@ -479,8 +479,8 @@ def _ora1_deprecation_info(course_id, advanced_modules):
         * Components presence in the course outline.
 
     Arguments:
-        course_id: course id
-        advanced_modules: advance module list
+        course_id (CourseKey): course id
+        advanced_modules (list): advance module list
 
     Returns:
         Dict with following keys:
@@ -489,6 +489,12 @@ def _ora1_deprecation_info(course_id, advanced_modules):
         ora1_components (list): List of ora1 components and their parent's url
         advance_settings_url (str): URL to advance settings page
     """
+    default = {
+        'ora1_enabled': False,
+        'ora1_components': [],
+        'advance_settings_url': ''
+    }
+
     modified_timestamp = CourseStructure.objects.filter(course_id=course_id).values('modified')
     if modified_timestamp.exists():
         cache_key = 'ora1.components.{course}.{modified}'.format(
@@ -496,7 +502,7 @@ def _ora1_deprecation_info(course_id, advanced_modules):
             modified=modified_timestamp[0]['modified']
         )
     else:
-        return {}
+        return default
 
     ora1_components = cache.get(cache_key)  # pylint: disable=maybe-no-member
     if not ora1_components:
@@ -504,7 +510,7 @@ def _ora1_deprecation_info(course_id, advanced_modules):
             course_structure = CourseStructure.objects.get(course_id=course_id)
             ordered_blocks = course_structure.ordered_blocks
         except CourseStructure.DoesNotExist:
-            return {}
+            return default
 
         ora1_components = []
         for __, block in ordered_blocks.items():
