@@ -753,7 +753,10 @@ class TestExecutiveSummaryReport(TestReportMixin, InstructorTaskCourseTestCase):
             )
             coupon.save()
 
-    def test_success(self):
+    def test_successfully_generate_executive_summary_report(self):
+        """
+        Test that successfully generates the executive summary report.
+        """
         task_input = {'features': []}
         with patch('instructor_task.tasks_helper._get_current_task'):
             result = upload_exec_summary_report(
@@ -763,11 +766,10 @@ class TestExecutiveSummaryReport(TestReportMixin, InstructorTaskCourseTestCase):
         ReportStore.from_config(config_name='FINANCIAL_REPORTS')
         self.assertDictContainsSubset({'attempted': 1, 'succeeded': 1, 'failed': 0}, result)
 
-    @patch.dict('django.conf.settings.FEATURES', {'ENABLE_PAID_COURSE_REGISTRATION': True})
-    def test_generate_executive_summary_report(self):
+    def students_purchases(self):
         """
-        test to generate executive summary report
-        and then test the report authenticity.
+        Students purchases the courses using enrollment
+        and coupon codes.
         """
         self.client.login(username=self.student1.username, password='test')
         paid_course_reg_item = PaidCourseRegistration.add_to_order(self.student1_cart, self.course.id)
@@ -801,6 +803,13 @@ class TestExecutiveSummaryReport(TestReportMixin, InstructorTaskCourseTestCase):
 
         self.student2_cart.purchase()
 
+    @patch.dict('django.conf.settings.FEATURES', {'ENABLE_PAID_COURSE_REGISTRATION': True})
+    def test_generate_executive_summary_report(self):
+        """
+        test to generate executive summary report
+        and then test the report authenticity.
+        """
+        self.students_purchases()
         task_input = {'features': []}
         with patch('instructor_task.tasks_helper._get_current_task'):
             result = upload_exec_summary_report(
@@ -821,12 +830,11 @@ class TestExecutiveSummaryReport(TestReportMixin, InstructorTaskCourseTestCase):
         """
         Verify grade report data.
         """
-        with patch('instructor_task.tasks_helper._get_current_task'):
-            report_html_filename = report_store.links_for(self.course.id)[0][0]
-            with open(report_store.path_to(self.course.id, report_html_filename)) as html_file:
-                html_file_data = html_file.read()
-                for data in expected_data:
-                    self.assertTrue(data in html_file_data)
+        report_html_filename = report_store.links_for(self.course.id)[0][0]
+        with open(report_store.path_to(self.course.id, report_html_filename)) as html_file:
+            html_file_data = html_file.read()
+            for data in expected_data:
+                self.assertTrue(data in html_file_data)
 
 
 @ddt.ddt

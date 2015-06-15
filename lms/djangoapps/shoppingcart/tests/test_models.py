@@ -469,7 +469,8 @@ class PaidCourseRegistrationTest(ModuleStoreTestCase):
         self.cart.purchase()
         self.assertFalse(CourseEnrollment.is_enrolled(self.user, self.course_key))
         # check that the registration codes are generated against the order
-        self.assertEqual(len(CourseRegistrationCode.objects.filter(order=self.cart)), item.qty)
+        registration_codes = CourseRegistrationCode.order_generated_registration_codes(self.course_key)
+        self.assertEqual(registration_codes.count(), item.qty)
 
     def test_regcode_redemptions(self):
         """
@@ -480,7 +481,7 @@ class PaidCourseRegistrationTest(ModuleStoreTestCase):
         CourseRegCodeItem.add_to_order(self.cart, self.course_key, 2)
         self.cart.purchase()
 
-        reg_code = CourseRegistrationCode.objects.filter(order=self.cart)[0]
+        reg_code = CourseRegistrationCode.order_generated_registration_codes(self.course_key)[0]
 
         enrollment = CourseEnrollment.enroll(self.user, self.course_key)
 
@@ -505,7 +506,7 @@ class PaidCourseRegistrationTest(ModuleStoreTestCase):
         CourseRegCodeItem.add_to_order(self.cart, self.course_key, 2)
         self.cart.purchase()
 
-        reg_codes = CourseRegistrationCode.objects.filter(order=self.cart)
+        reg_codes = CourseRegistrationCode.order_generated_registration_codes(self.course_key)
 
         self.assertEqual(len(reg_codes), 2)
 
@@ -984,9 +985,33 @@ class InvoiceHistoryTest(TestCase):
         super(InvoiceHistoryTest, self).setUp()
         invoice_data = copy.copy(self.INVOICE_INFO)
         invoice_data.update(self.CONTACT_INFO)
-        self.invoice = Invoice.objects.create(total_amount="123.45", **invoice_data)
         self.course_key = CourseLocator('edX', 'DemoX', 'Demo_Course')
+        self.invoice = Invoice.objects.create(total_amount="123.45", course_id=self.course_key, **invoice_data)
         self.user = UserFactory.create()
+
+    def test_get_invoice_total_amount(self):
+        """
+        test to check the total amount
+        of the invoices for the course.
+        """
+        total_amount = Invoice.get_invoice_total_amount_for_course(self.course_key)
+        self.assertEqual(total_amount, 123.45)
+
+    def test_get_total_amount_of_paid_invoices(self):
+        """
+        Test to check the Invoice Transactions amount.
+        """
+        InvoiceTransaction.objects.create(
+            invoice=self.invoice,
+            amount='123.45',
+            currency='usd',
+            comments='test comments',
+            status='completed',
+            created_by=self.user,
+            last_modified_by=self.user
+        )
+        total_amount_paid = InvoiceTransaction.get_total_amount_of_paid_course_invoices(self.course_key)
+        self.assertEqual(float(total_amount_paid), 123.45)
 
     def test_invoice_contact_info_history(self):
         self._assert_history_invoice_info(
@@ -997,6 +1022,30 @@ class InvoiceHistoryTest(TestCase):
         self._assert_history_contact_info(**self.CONTACT_INFO)
         self._assert_history_items([])
         self._assert_history_transactions([])
+
+    def test_invoice_generated_registration_codes(self):
+        """
+        test filter out the registration codes
+        that were generated via Invoice.
+        """
+        invoice_item = CourseRegistrationCodeInvoiceItem.objects.create(
+            invoice=self.invoice,
+            qty=5,
+            unit_price='123.45',
+            course_id=self.course_key
+        )
+        for i in range(5):
+            CourseRegistrationCode.objects.create(
+                code='testcode{counter}'.format(counter=i),
+                course_id=self.course_key,
+                created_by=self.user,
+                invoice=self.invoice,
+                invoice_item=invoice_item,
+                mode_slug='honor'
+            )
+
+        registration_codes = CourseRegistrationCode.invoice_generated_registration_codes(self.course_key)
+        self.assertEqual(registration_codes.count(), 5)
 
     def test_invoice_history_items(self):
         # Create an invoice item

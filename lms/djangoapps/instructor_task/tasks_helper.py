@@ -57,7 +57,7 @@ TASK_LOG = logging.getLogger('edx.celery.task')
 
 # define value to use when no task_id is provided:
 UNKNOWN_TASK_ID = 'unknown-task_id'
-FILTERED_OUT_ROLES = ['staff', 'instructor', 'fiance_admin', 'sales_admin']
+FILTERED_OUT_ROLES = ['staff', 'instructor', 'finance_admin', 'sales_admin']
 # define values for update functions to use to return status to perform_module_state_update
 UPDATE_STATUS_SUCCEEDED = 'succeeded'
 UPDATE_STATUS_FAILED = 'failed'
@@ -1060,34 +1060,10 @@ def upload_may_enroll_csv(_xmodule_instance_args, _entry_id, course_id, task_inp
     return task_progress.update_task_state(extra_meta=current_step)
 
 
-def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _task_input, action_name):  # pylint: disable=too-many-statements
+def get_executive_report(course_id):
     """
-    For a given `course_id`, generate a html report containing information,
-    which provides a snapshot of how the course is doing.
+    Returns dict containing information about the course executive summary.
     """
-    start_time = time()
-    report_generation_date = datetime.now(UTC)
-    status_interval = 100
-
-    enrolled_users = CourseEnrollment.objects.users_enrolled_in(course_id)
-    true_enrollment_count = 0
-    for user in enrolled_users:
-        if not user.is_staff and not CourseAccessRole.objects.filter(
-                user=user, course_id=course_id, role__in=FILTERED_OUT_ROLES
-        ).exists():
-            true_enrollment_count += 1
-
-    task_progress = TaskProgress(action_name, true_enrollment_count, start_time)
-
-    fmt = u'Task: {task_id}, InstructorTask ID: {entry_id}, Course: {course_id}, Input: {task_input}'
-    task_info_string = fmt.format(
-        task_id=_xmodule_instance_args.get('task_id') if _xmodule_instance_args is not None else None,
-        entry_id=_entry_id,
-        course_id=course_id,
-        task_input=_task_input
-    )
-    TASK_LOG.info(u'%s, Task type: %s, Starting task execution', task_info_string, action_name)
-
     single_purchase_total = PaidCourseRegistration.get_total_amount_of_purchased_item(course_id)
     bulk_purchase_total = CourseRegCodeItem.get_total_amount_of_purchased_item(course_id)
     paid_invoices_total = InvoiceTransaction.get_total_amount_of_paid_course_invoices(course_id)
@@ -1138,34 +1114,14 @@ def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _ta
         invoice_purchases_percentage = (float(total_invoiced_seats) / float(total_seats)) * 100
         avg_price_paid = gross_revenue / total_seats
 
-    current_step = {'step': 'Gathering Executive Summary Report Information'}
-
-    TASK_LOG.info(
-        u'%s, Task type: %s, Current step: %s, generating executive summary report',
-        task_info_string,
-        action_name,
-        current_step
-    )
-
-    if task_progress.attempted % status_interval == 0:
-        task_progress.update_task_state(extra_meta=current_step)
-    task_progress.attempted += 1
-
-    # By this point, we've got the data that we need to generate html report.
-    current_step = {'step': 'Uploading Executive Summary Enrollment Report html file.'}
-    task_progress.update_task_state(extra_meta=current_step)
-    TASK_LOG.info(u'%s, Task type: %s, Current step: %s', task_info_string, action_name, current_step)
-
     course = get_course_by_id(course_id, depth=0)
     currency = settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
 
-    data_dict = {
+    return {
         'display_name': course.display_name,
         'start_date': course.start.strftime("%Y-%m-%d") if course.start is not None else 'N/A',
         'end_date': course.end.strftime("%Y-%m-%d") if course.end is not None else 'N/A',
-        'report_generation_date': report_generation_date.strftime("%Y-%m-%d"),
         'total_seats': total_seats,
-        'total_enrollments': true_enrollment_count,
         'currency': currency,
         'gross_revenue': float(gross_revenue),
         'gross_pending_revenue': gross_pending_revenue,
@@ -1182,6 +1138,62 @@ def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _ta
         'bulk_purchases_percentage': bulk_purchases_percentage,
         'invoice_purchases_percentage': invoice_purchases_percentage,
     }
+
+
+def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _task_input, action_name):  # pylint: disable=too-many-statements
+    """
+    For a given `course_id`, generate a html report containing information,
+    which provides a snapshot of how the course is doing.
+    """
+    start_time = time()
+    report_generation_date = datetime.now(UTC)
+    status_interval = 100
+
+    enrolled_users = CourseEnrollment.objects.users_enrolled_in(course_id)
+    true_enrollment_count = 0
+    for user in enrolled_users:
+        if not user.is_staff and not CourseAccessRole.objects.filter(
+                user=user, course_id=course_id, role__in=FILTERED_OUT_ROLES
+        ).exists():
+            true_enrollment_count += 1
+
+    task_progress = TaskProgress(action_name, true_enrollment_count, start_time)
+
+    fmt = u'Task: {task_id}, InstructorTask ID: {entry_id}, Course: {course_id}, Input: {task_input}'
+    task_info_string = fmt.format(
+        task_id=_xmodule_instance_args.get('task_id') if _xmodule_instance_args is not None else None,
+        entry_id=_entry_id,
+        course_id=course_id,
+        task_input=_task_input
+    )
+
+    TASK_LOG.info(u'%s, Task type: %s, Starting task execution', task_info_string, action_name)
+    current_step = {'step': 'Gathering Executive Summary Report Information'}
+
+    TASK_LOG.info(
+        u'%s, Task type: %s, Current step: %s, generating executive summary report',
+        task_info_string,
+        action_name,
+        current_step
+    )
+
+    if task_progress.attempted % status_interval == 0:
+        task_progress.update_task_state(extra_meta=current_step)
+    task_progress.attempted += 1
+
+    # get the course executive summary report information.
+    data_dict = get_executive_report(course_id)
+    data_dict.update(
+        {
+            'total_enrollments': true_enrollment_count,
+            'report_generation_date': report_generation_date.strftime("%Y-%m-%d"),
+        }
+    )
+
+    # By this point, we've got the data that we need to generate html report.
+    current_step = {'step': 'Uploading Executive Summary Enrollment Report html file.'}
+    task_progress.update_task_state(extra_meta=current_step)
+    TASK_LOG.info(u'%s, Task type: %s, Current step: %s', task_info_string, action_name, current_step)
 
     # Perform the actual upload
     upload_exec_summary_to_store(data_dict, 'executive_report', course_id, report_generation_date)
