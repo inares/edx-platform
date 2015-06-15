@@ -143,10 +143,9 @@ class TestingCallStackManager(TestCase):
         ModelMixinCSM(id_field=1).save()
         track_it()
         self.assertEqual(ModelMixinCSM, log_capt.call_args_list[0][0][1])
-        self.assertEqual(ModelAnotherCSM, log_capt.call_args_list[1][0][1] )
+        self.assertEqual(ModelAnotherCSM, log_capt.call_args_list[1][0][1])
         self.assertEqual(ModelMixinCSM, log_capt.call_args_list[2][0][1])
-        self.assertEqual(ModelAnotherCSM, log_capt.call_args_list[3][0][1] )
-
+        self.assertEqual(ModelAnotherCSM, log_capt.call_args_list[3][0][1])
 
     @patch('openedx.core.djangoapps.call_stack_manager.core.log.info')
     def test_donottrack_child_too(self, log_capt):
