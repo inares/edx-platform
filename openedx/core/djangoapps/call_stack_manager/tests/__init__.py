@@ -1,4 +1,4 @@
-"""
+""" For tests
 Models for testing Call Stack Manager
 """
 from django.db import models

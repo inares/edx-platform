@@ -4,7 +4,7 @@ Test cases for Call Stack Manager
 from mock import patch
 from django.test import TestCase
 from openedx.core.djangoapps.call_stack_manager import donottrack
-from .models import ModelAnotherCSM, ModelMixin, ModelNothing, ModelMixinCSM, ModelWithCSM, ModelWithCSMChild
+from . import ModelAnotherCSM, ModelMixin, ModelNothing, ModelMixinCSM, ModelWithCSM, ModelWithCSMChild
 
 
 class TestingCallStackManager(TestCase):
