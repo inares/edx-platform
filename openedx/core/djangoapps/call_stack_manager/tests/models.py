@@ -1,5 +1,9 @@
 """
+<<<<<<< HEAD
 Models for csm
+=======
+The file defines Model classes required for testing call_stack_manager.py
+>>>>>>> parent of 390b29f... making models scoped to testing work
 """
 from django.db import models
 from openedx.core.djangoapps.call_stack_manager import CallStackManager, CallStackMixin
@@ -11,6 +15,10 @@ class ModelMixinCSM(CallStackMixin, models.Model):
     """
     # override Manager objects
     objects = CallStackManager()
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 390b29f... making models scoped to testing work
     id_field = models.IntegerField()
 
 
