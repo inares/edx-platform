@@ -1,10 +1,10 @@
 """
 Unit tests for getting the list of courses and the course outline.
 """
+import ddt
 import json
 import lxml
 import datetime
-import os
 import mock
 import pytz
 
@@ -14,8 +14,10 @@ from django.utils.translation import ugettext as _
 
 from contentstore.courseware_index import CoursewareSearchIndexer, SearchIndexingError
 from contentstore.tests.utils import CourseTestCase
-from contentstore.utils import reverse_course_url, reverse_library_url, add_instructor
-from contentstore.views.course import course_outline_initial_state, reindex_course_and_check_access
+from contentstore.utils import reverse_course_url, reverse_library_url, add_instructor, reverse_usage_url
+from contentstore.views.course import (
+    course_outline_initial_state, reindex_course_and_check_access, _ora1_deprecation_info
+)
 from contentstore.views.item import create_xblock_info, VisibilityState
 from course_action_state.managers import CourseRerunUIStateManager
 from course_action_state.models import CourseRerunState
@@ -225,6 +227,7 @@ class TestCourseIndex(CourseTestCase):
                 self.assert_correct_json_response(child_response)
 
 
+@ddt.ddt
 class TestCourseOutline(CourseTestCase):
     """
     Unit tests for the course outline.
@@ -339,6 +342,38 @@ class TestCourseOutline(CourseTestCase):
 
         self.assertEqual(_get_release_date(response), get_default_time_display(self.course.start))
         _assert_settings_link_present(response)
+
+    @ddt.data(
+        {'ora1_advance_modules': False, 'ora1_components': False},
+        {'ora1_advance_modules': False, 'ora1_components': True},
+        {'ora1_advance_modules': True, 'ora1_components': False},
+        {'ora1_advance_modules': True, 'ora1_components': True},
+    )
+    @ddt.unpack
+    def test_ora1_deprecated_warning(self, ora1_advance_modules, ora1_components):
+        """
+        Verify ora1 deprecated warning info
+        """
+        expected_ora1_components = []
+        if ora1_components:
+            ItemFactory.create(parent_location=self.vertical.location, category="peergrading", display_name="Peer")
+            ItemFactory.create(parent_location=self.vertical.location, category="combinedopenended", display_name="COE")
+
+            expected_ora1_components.append([reverse_usage_url('container_handler', self.vertical.location), 'Peer'])
+            expected_ora1_components.append([reverse_usage_url('container_handler', self.vertical.location), 'COE'])
+
+        course_module = modulestore().get_item(self.course.location)
+
+        if ora1_advance_modules:
+            course_module.advanced_modules.extend(['peergrading', 'combinedopenended'])
+
+        info = _ora1_deprecation_info(course_module.id, course_module.advanced_modules)
+
+        self.assertEqual(info['ora1_enabled'], ora1_advance_modules)
+        self.assertEqual(info['ora1_components'], expected_ora1_components)
+        self.assertEqual(
+            info['advance_settings_url'], reverse_course_url('advanced_settings_handler', course_module.id)
+        )
 
 
 class TestCourseReIndex(CourseTestCase):
