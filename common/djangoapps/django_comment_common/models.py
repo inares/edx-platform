@@ -117,7 +117,6 @@ def all_permissions_for_user_in_course(user, course_id):
     course_blacked_out = not course.forum_posts_allowed
 
     all_roles = {role.name for role in Role.objects.filter(users=user, course_id=course_id)}
-    print all_roles
 
     def permission_blacked_out(p_name):
         return (
@@ -132,5 +131,4 @@ def all_permissions_for_user_in_course(user, course_id):
         in Permission.objects.filter(roles__users=user, roles__course_id=course_id)
         if not permission_blacked_out(permission.name) 
     }
-    print permissions
     return permissions
