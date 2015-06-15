@@ -1,5 +1,5 @@
 """
-Models for testing call stack manager
+Models for csm
 """
 from django.db import models
 from openedx.core.djangoapps.call_stack_manager import CallStackManager, CallStackMixin
