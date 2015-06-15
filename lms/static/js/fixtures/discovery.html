@@ -7,7 +7,7 @@
         <i class="icon fa fa-search" aria-hidden="true"></i>
         <div aria-live="polite" aria-relevant="all">
           <div id="loading-indicator" class="loading-spinner hidden">
-          <i class="icon fa fa-spinner fa-spin"></i>
+          <i class="icon fa fa-spinner fa-spin" aria-hidden="true"></i>
           <span class="sr">Loading</span>
           </div>
         </div>
@@ -17,9 +17,9 @@
     <div id="filter-bar" class="filters hide-phone">
     </div>
 
-    <section class="courses">
+    <div class="courses" role="region" aria-label="${_('List of Courses')}">
       <ul class="courses-listing"></ul>
-    </section>
+    </div>
 
     <aside aria-label="Refine your search" class="search-facets phone-menu">
     </aside>

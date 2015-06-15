@@ -69,7 +69,7 @@ $facet-background-color: #007db8;
 
         @include media($bp-medium) {
           @include span-columns(4); // 4 of 8
-          @include omega(1n);
+          @include omega(2n);
         }
 
         @include media($bp-large) {
@@ -244,7 +244,7 @@ $facet-background-color: #007db8;
     &:focus {
       @extend %no-outline;
       box-shadow: none;
-      border-color: $blue-d2;
+      border-color: $m-blue-d6;
     }
   }
 
@@ -256,7 +256,7 @@ $facet-background-color: #007db8;
     @include right(0);
     position: absolute;
     top: 0;
-    border: 2px solid $blue-d2;
+    border: 2px solid $m-blue-d6;
     border-radius: ($baseline*0.1);
     box-shadow: none;
     background: $blue;
@@ -267,7 +267,7 @@ $facet-background-color: #007db8;
 
     //STATE: hover, focus
     &:hover, &:focus {
-      background: $blue-d1;
+      background: $m-blue-d5;
     }
   }
 
@@ -324,7 +324,7 @@ $facet-background-color: #007db8;
       margin: ($baseline/2);
       width: auto;
       text-align: center;
-      color: $blue-d1;
+      color: $m-blue-d5;
     }
 
     .flt-right {
@@ -417,7 +417,7 @@ $facet-background-color: #007db8;
       @include clearfix();
       @extend %t-action3;
       @extend %text-truncated;
-      margin: ($baseline/4) 0;
+      padding: ($baseline/4) ($baseline/2);
       border-radius: 0px;
       opacity: 1;
       width: 100%;
