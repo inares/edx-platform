@@ -11,10 +11,7 @@ from django.db import connection, transaction
 from django.core.urlresolvers import reverse
 
 from opaque_keys.edx.keys import CourseKey
-from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
-from student.tests.factories import UserFactory
-from xmodule.modulestore.tests.factories import CourseFactory
 from openedx.core.djangoapps.credit import api
 from openedx.core.djangoapps.credit.exceptions import (
     InvalidCreditRequirements,
@@ -31,8 +28,10 @@ from openedx.core.djangoapps.credit.models import (
     CreditRequirementStatus,
     CreditEligibility,
 )
-from opaque_keys.edx import locator
 from student.models import CourseEnrollment
+from student.tests.factories import UserFactory
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
+from xmodule.modulestore.tests.factories import CourseFactory
 
 
 class CreditApiTestBase(TestCase):
@@ -265,14 +264,14 @@ class CreditProviderIntegrationApiTests(CreditApiTestBase):
         # Initial status should be "pending"
         self._assert_credit_status("pending")
 
-        credit_request_status = api.get_credit_requests_status(self.USER_INFO['username'], self.course_key)
+        credit_request_status = api.get_credit_request_status(self.USER_INFO['username'], self.course_key)
         self.assertEqual(credit_request_status["status"], "pending")
 
         # Update the status
         api.update_credit_request_status(request['uuid'], status)
         self._assert_credit_status(status)
 
-        credit_request_status = api.get_credit_requests_status(self.USER_INFO['username'], self.course_key)
+        credit_request_status = api.get_credit_request_status(self.USER_INFO['username'], self.course_key)
         self.assertEqual(credit_request_status["status"], status)
 
     def test_query_counts(self):
@@ -421,31 +420,30 @@ class CreditProviderIntegrationApiTests(CreditApiTestBase):
 
 class CreditMessagesTests(ModuleStoreTestCase, CreditApiTestBase):
 
-    PASSWORD = 'test'
     FINAL_GRADE = 0.8
 
     def setUp(self):
         super(CreditMessagesTests, self).setUp()
         self.student = UserFactory()
-        self.student.set_password(self.PASSWORD)
+        self.student.set_password('test')
         self.student.save()
 
-        self.client.login(username=self.student.username, password=self.PASSWORD)
+        self.client.login(username=self.student.username, password='test')
         # New Course
         self.course = CourseFactory.create()
         self.enrollment = CourseEnrollment.enroll(self.student, self.course.id)
 
     def _set_creditcourse(self):
-        self.provider1 = CreditProvider.objects.create(
+        self.first_provider = CreditProvider.objects.create(
             provider_id="ASU", display_name="Arizona State University", provider_url="google.com"
         )
-        self.provider2 = CreditProvider.objects.create(
+        self.second_provider = CreditProvider.objects.create(
             provider_id="MIT", display_name="Massachusetts Institute of Technology", provider_url="MIT.com"
         )
 
         self.credit_course = CreditCourse.objects.create(course_key=self.course.id, enabled=True)
-        self.credit_course.providers.add(self.provider1)
-        self.credit_course.providers.add(self.provider2)
+        self.credit_course.providers.add(self.first_provider)
+        self.credit_course.providers.add(self.second_provider)
 
     def _set_user_eligible(self, credit_course, username):
         self.eligibility = CreditEligibility.objects.create(username=username, course=credit_course)
@@ -475,13 +473,13 @@ class CreditMessagesTests(ModuleStoreTestCase, CreditApiTestBase):
             )
         )
 
-        api.create_credit_request(self.course.id, self.provider1.provider_id, self.student.username)
+        api.create_credit_request(self.course.id, self.first_provider.provider_id, self.student.username)
 
         response = self.client.get(reverse("dashboard"))
         self.assertContains(
             response, 'Thank you, your payment is complete, your credit is processing. Please see {provider_link} for more information.'.format(
                 provider_link='<a href="#" target="_blank">{provider_name}</a>'.format(
-                    provider_name=self.provider1.display_name
+                    provider_name=self.first_provider.display_name
                 )
             )
         )

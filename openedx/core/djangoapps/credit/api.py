@@ -2,10 +2,8 @@
 import logging
 import uuid
 from django.db import transaction
-from openedx.core.djangoapps.credit.models import CreditProvider
 
 from student.models import User
-
 from .exceptions import (
     InvalidCreditRequirements,
     InvalidCreditCourse,
@@ -16,6 +14,7 @@ from .exceptions import (
 )
 from .models import (
     CreditCourse,
+    CreditProvider,
     CreditRequirement,
     CreditRequirementStatus,
     CreditRequest,
@@ -379,9 +378,9 @@ def _validate_requirements(requirements):
     return invalid_requirements
 
 
-def get_credit_requests_status(username, course_key):
-    """
-    Get the credit request status.
+def get_credit_request_status(username, course_key):
+    """Get the credit request status.
+
     This function returns the status of credit request of user for given course.
     It returns the latest request status for the any credit provider.
     The valid status are 'pending', 'approved' or 'rejected'.
@@ -391,7 +390,7 @@ def get_credit_requests_status(username, course_key):
         course_key(CourseKey): The course locator key
 
     Returns:
-        A dictionary of credit request user has made in any
+        A dictionary of credit request user has made if any
 
     """
     credit_request = CreditRequest.get_user_request_status(username, course_key)
@@ -412,8 +411,8 @@ def get_credit_requests_status(username, course_key):
 
 
 def _get_duration_and_providers(credit_course):
-    """
-    Returns the credit providers and eligibility durations.
+    """Returns the credit providers and eligibility durations.
+
     The eligibility_duration is the max of the credit duration of
     all the credit providers of given course.
 
@@ -422,6 +421,7 @@ def _get_duration_and_providers(credit_course):
 
     Returns:
         Tuple of eligibility_duration and credit providers of given course
+
     """
     providers = credit_course.providers.all()
     seconds_good_for_display = 0
@@ -442,19 +442,19 @@ def _get_duration_and_providers(credit_course):
 
 def _get_credit_request_status(username, course_key):
     """
-    Returns the credit request status
+    Returns the credit request status.
 
     Args:
         username(str): The username of a user
         course_key(CourseKey): The CourseKey
 
     Returns:
-        The tuple of status and provider\
+        The tuple of status and provider.
 
     """
     status = None
     provider = None
-    credit_request = get_credit_requests_status(username, course_key)
+    credit_request = get_credit_request_status(username, course_key)
     if credit_request:
         status = credit_request["status"]
         provider = credit_request["provider"]

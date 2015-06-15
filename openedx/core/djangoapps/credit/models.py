@@ -216,6 +216,15 @@ class CreditEligibility(TimeStampedModel):
     
     @classmethod
     def get_user_eligibility(cls, username):
+        """Returns the eligibilities of given user.
+
+        Args:
+            username(str): Username of the user
+
+        Returns:
+            CreditEligibility queryset for the user
+
+        """
         return cls.objects.filter(username=username).select_related('course').prefetch_related('course__providers')
 
 
@@ -303,13 +312,15 @@ class CreditRequest(TimeStampedModel):
 
     @classmethod
     def get_user_request_status(cls, username, course_key):
-        """
-        Returns the latest credit request made by given user against the given course
+        """Returns the latest credit request of user against the given course.
 
         Args:
             username(str): The username of requesting user
-            course_key():
-        :return:
+            course_key(CourseKey): The course identifier
+
+        Returns:
+            CreditRequest if any otherwise None
+
         """
         try:
             return cls.objects.filter(
