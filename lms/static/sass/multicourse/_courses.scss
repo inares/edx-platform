@@ -7,8 +7,7 @@
 // * +Layout - Courses Container
 // * +Header - Course Search
 // * +Search Input
-// * +Filters - Search
-// * +Facets - Sidebar - Search
+// * +Filters and Facets- Search
 // * +All Other Styles
 
 
@@ -45,7 +44,7 @@ $facet-background-color: #007db8;
   }
 
   .courses-container {
-    @include padding(($baseline*3), ($baseline/2), 0, ($baseline/2));
+    @include padding(($baseline*2), ($baseline/2), 0, ($baseline/2));
 
     .courses {
       @include rtl() { $layout-direction: "RTL"; }
@@ -92,7 +91,7 @@ $facet-background-color: #007db8;
 .find-courses, .university-profile {
 
   header.search {
-    background: $course-profile-bg;
+    background: $gray-l5;
     background-size: cover;
     background-image: $homepage-bg-image;
     background-position: center top !important;
@@ -280,7 +279,7 @@ $facet-background-color: #007db8;
   } 
 }
 
-// +Filters - Search
+// +Filters and Facets - Search
 // ====================
 .find-courses {
 
@@ -333,135 +332,132 @@ $facet-background-color: #007db8;
     }
   }
 
-}
-
-// +Facets - Sidebar - Search
-// ====================
-.find-courses .search-facets {
-  @include fill-parent();
-  @include omega();
-  @include box-sizing(border-box);
-  @extend %ui-depth1;
-  position: relative;
-  margin: ($baseline*2) 0 ($baseline*3.5) 0;
-  box-shadow: 1px 2px 5px $black-t0;
-  border-top: 1px solid $black;
-  border-bottom: 2px solid $black;
-  background-color: $white;
-  max-height: ($baseline*100);
-
-  @include media($bp-tiny) {
+  .search-facets {
     @include fill-parent();
-  }
-
-  @include media($bp-small) {
-    @include span-columns(4);
-  }
-
-  @include media($bp-medium) {
-    @include span-columns(8);
-  }
-
-  @include media($bp-large) {
-    @include span-columns(4);
-  }
-
-  @include media($bp-huge) {
-    @include span-columns(3);
-  }
-
-  &.phone-menu {
-    border: medium none;
-    padding: 0;
-    overflow: visible;
-  }
-
-  &:before {
-    @include right(0);
-    position: absolute;
-    top: (-$baseline*0.15);
-    opacity: 0;
+    @include omega();
+    @include box-sizing(border-box);
+    @extend %ui-depth1;
+    position: relative;
+    margin: ($baseline*2) 0 ($baseline*3.5) 0;
+    box-shadow: 1px 2px 5px $black-t0;
+    border-top: 1px solid $black;
+    border-bottom: 2px solid $black;
     background-color: $white;
-    padding: ($baseline*2) ($baseline*0.75) 0 ($baseline*0.75);
-    width: ($baseline*2.5);
-    height: ($baseline/4);
-    content: "";
-  }
+    max-height: ($baseline*100);
 
-  .header-search-facets, .header-facet {
-    @extend %t-title6;
-    padding: ($baseline/2);
-    margin: 0;
-    color: $facet-text-color;
-    text-transform: none;
-  }
-
-  .header-facet {
-    margin: 0 ($baseline/2);
-    padding: ($baseline/2) 0;
-  }
-
-  .search-facets-lists section {
-    border-top: 1px solid $courseware-button-border-color;
-  }
-
-  .facet-list {
-    @extend %ui-no-list;
-    @include clearfix();
-    padding-bottom: ($baseline/2); 
-  }
-
-  .facet-option {
-    @include float(left);
-    @include line-height(18.92);
-    @include transition(all $tmg-f2 ease-out 0s);
-    @include clearfix();
-    @extend %t-action3;
-    @extend %text-truncated;
-    border-radius: 0px;
-    opacity: 1;
-    width: 100%;
-    color: $facet-text-color;
-
-    &.collapse {
-      max-height: ($baseline*14);
+    @include media($bp-tiny) {
+      @include fill-parent();
     }
 
-    li {
-      @include clearfix();
-      position: relative;
-      clear: both;
+    @include media($bp-small) {
+      @include span-columns(4);
+    }
+
+    @include media($bp-medium) {
+      @include span-columns(8);
+    }
+
+    @include media($bp-large) {
+      @include span-columns(4);
+    }
+
+    @include media($bp-huge) {
+      @include span-columns(3);
+    }
+
+    &.phone-menu {
+      border: medium none;
       padding: 0;
-      height: ($baseline*1.5);
+      overflow: visible;
     }
 
-    .count {
-      @include right($baseline*0.6);
-      @include float(right);
-      @include box-sizing(border-box);
-      @include transition(all 0.2s ease-out);
-      @include line-height(18.92);
+    &:before {
+      @include right(0);
+      position: absolute;
+      top: (-$baseline*0.15);
+      opacity: 0;
+      background-color: $white;
+      padding: ($baseline*2) ($baseline*0.75) 0 ($baseline*0.75);
+      width: ($baseline*2.5);
+      height: ($baseline/4);
+      content: "";
     }
 
-    //STATE: hover
-    &:hover {
-      background: $facet-background-color;
-      color: $white;
-      text-decoration: none;
+    .header-search-facets, .header-facet {
+      @extend %t-title6;
+      @extend %t-strong;
+      padding: ($baseline/2);
+      margin: 0;
+      color: $facet-text-color;
+      text-transform: none;
+    }
 
-      .count {
-        color: $white;
+    .header-facet {
+      margin: 0 ($baseline/2);
+      padding: ($baseline/2) 0;
+    }
+
+    .search-facets-lists section {
+      border-top: 1px solid $gray-l4;
+    }
+
+    .facet-list {
+      @extend %ui-no-list;
+      @include clearfix();
+      padding-bottom: ($baseline/2); 
+
+      &.collapse {
+        max-height: ($baseline*14);
       }
     }
-  }
 
-  .toggle {
-    @include clearfix();
+    .facet-option {
+      @include float(left);
+      @include transition(all $tmg-f2 ease-out 0s);
+      @include clearfix();
+      @extend %t-action3;
+      @extend %text-truncated;
+      margin: ($baseline/4) 0;
+      border-radius: 0px;
+      opacity: 1;
+      width: 100%;
+      color: $facet-text-color;
 
-    button {
-      @extend %t-icon6;
-      @extend %t-strong;
-      color: $facet-background-color;
+      li {
+        @include clearfix();
+        position: relative;
+        clear: both;
+        padding: 0;
+        height: ($baseline*1.5);
+      }
+
+      .count {
+        @include right($baseline*0.6);
+        @include box-sizing(border-box);
+        @include transition(all 0.2s ease-out);
+        position: absolute;
+      }
+
+      //STATE: hover, focus
+      &:hover, &:focus {
+        background: $facet-background-color;
+        color: $white;
+        text-decoration: none;
+
+        .count {
+          color: $white;
+        }
+      }
+    }
+
+    .toggle {
+      @include clearfix();
+
+      button {
+        @extend %t-icon6;
+        @extend %t-strong;
+        color: $facet-background-color;
+      }
     }
   }
 }
@@ -469,7 +465,7 @@ $facet-background-color: #007db8;
 // +All Other Styles
 // ====================
 .find-courses, .university-profile {
-  background: $course-profile-bg;
+  background: $gray-l5;
   padding-bottom: ($baseline*3);
 
 
