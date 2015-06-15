@@ -1,4 +1,6 @@
-__author__ = 'utkarshjadhav'
+"""
+Models for testing Call Stack Manager
+"""
 from django.db import models
 from openedx.core.djangoapps.call_stack_manager import CallStackManager, CallStackMixin
 
