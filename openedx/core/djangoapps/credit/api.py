@@ -332,7 +332,14 @@ def get_credit_requirement(course_key, namespace, name):
         'CreditRequirement' object
 
     """
-    return CreditRequirement.get_course_requirement(course_key, namespace, name)
+    requirement = CreditRequirement.get_course_requirement(course_key, namespace, name)
+    return {
+        "course_key": requirement.course.course_key,
+        "namespace": requirement.namespace,
+        "name": requirement.name,
+        "display_name": requirement.display_name,
+        "criteria": requirement.criteria
+    } if requirement else None
 
 
 def set_credit_requirement_status(username, requirement, status="satisfied", reason=None):
@@ -341,13 +348,28 @@ def set_credit_requirement_status(username, requirement, status="satisfied", rea
 
     Args:
         username(str): Username of the user
-        requirement(CreditRequirement): 'CreditRequirement' object
+        requirement(dict): requirement dict
         status(str): Status of the requirement
         reason(dict): Reason of the status
 
+    Example:
+        >>> set_credit_requirement_status(
+            "staff",
+            {
+                "course_key": "course-v1-edX-DemoX-1T2015"
+                "namespace": "reverification",
+                "name": "i4x://edX/DemoX/edx-reverification-block/assessment_uuid",
+            },
+            "satisfied",
+            {}
+            )
+
     """
+    credit_requirement = CreditRequirement.get_course_requirement(
+        requirement['course_key'], requirement['namespace'], requirement['name']
+    )
     CreditRequirementStatus.add_or_update_requirement_status(
-        username, requirement, status, reason
+        username, credit_requirement, status, reason
     )
 
 

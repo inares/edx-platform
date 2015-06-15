@@ -930,7 +930,7 @@ def _set_user_requirement_status(attempt, namespace, status, reason=None):
     try:
         checkpoint = VerificationCheckpoint.objects.get(photo_verification=attempt)
     except VerificationCheckpoint.DoesNotExist:
-        log.warn("Unable to find checkpoint for %s", attempt.user.username)
+        log.error("Unable to find checkpoint for user with id %d", attempt.user.id)
 
     if checkpoint is not None:
         course_key = checkpoint.course_id
@@ -945,7 +945,7 @@ def _set_user_requirement_status(attempt, namespace, status, reason=None):
             except Exception:  # pylint: disable=broad-except
                 # Catch exception if unable to add credit requirement
                 # status for user
-                log.warn("Unable to add Credit requirement status for %s", attempt.user.username)
+                log.error("Unable to add Credit requirement status for user with id %d", attempt.user.id)
 
 
 @require_POST

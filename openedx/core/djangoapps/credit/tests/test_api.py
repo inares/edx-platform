@@ -214,7 +214,7 @@ class CreditRequirementApiTests(CreditApiTestBase):
         set_credit_requirements(self.course_key, requirements)
         requirement = get_credit_requirement(self.course_key, "grade", "grade")
         self.assertIsNotNone(requirement)
-        self.assertEqual(requirement.namespace, requirements[0]['namespace'])
+        self.assertEqual(requirement['namespace'], requirements[0]['namespace'])
 
     def test_set_credit_requirement_status(self):
         self.add_credit_course()
@@ -241,15 +241,18 @@ class CreditRequirementApiTests(CreditApiTestBase):
 
         requirement = get_credit_requirement(self.course_key, "grade", "grade")
         set_credit_requirement_status("staff", requirement, 'satisfied', {})
-        status = CreditRequirementStatus.objects.get(username="staff", requirement=requirement)
-        self.assertEqual(status.requirement.namespace, requirement.namespace)
+        course_requirement = CreditRequirement.get_course_requirement(
+            requirement['course_key'], requirement['namespace'], requirement['name']
+        )
+        status = CreditRequirementStatus.objects.get(username="staff", requirement=course_requirement)
+        self.assertEqual(status.requirement.namespace, requirement['namespace'])
         self.assertEqual(status.status, "satisfied")
 
         set_credit_requirement_status(
             "staff", requirement, 'failed', {'failure_reason': "requirements not satisfied"}
         )
-        status = CreditRequirementStatus.objects.get(username="staff", requirement=requirement)
-        self.assertEqual(status.requirement.namespace, requirement.namespace)
+        status = CreditRequirementStatus.objects.get(username="staff", requirement=course_requirement)
+        self.assertEqual(status.requirement.namespace, requirement['namespace'])
         self.assertEqual(status.status, "failed")
 
 
