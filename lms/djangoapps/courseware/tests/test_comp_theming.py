@@ -41,4 +41,26 @@ class TestComprehensiveTheming(TestCase):
     def test_red_footer(self):
         resp = self.client.get('/')
         self.assertEqual(resp.status_code, 200)
+
+        import os, os.path
+        for namespace, lookup in edxmako.LOOKUP.items():
+            print "--- %s: %s" % (namespace, lookup.template_args['module_directory'])
+            for directory in lookup.directories:
+                print "  %s" % (directory,)
+
+        print "="*80
+        theme_dir = settings.REPO_ROOT / "themes/red-theme/lms/templates"
+        for file in os.listdir(theme_dir):
+            theme_file = os.path.join(theme_dir, file)
+            with open(theme_file) as f:
+                bytes = len(f.read())
+            print "    %s: %d" % (theme_file, bytes)
+
+        print "="*80
+        for dir, dirs, files in os.walk(settings.MAKO_MODULE_DIR):
+            print "%s ----------------" % (dir,)
+            for file in sorted(files):
+                with open(os.path.join(dir, file)) as f:
+                    bytes = len(f.read())
+                print "    %s: %d" % (file, bytes)
         self.assertContains(resp, "super-ugly")
