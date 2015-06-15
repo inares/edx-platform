@@ -220,7 +220,7 @@ class Order(models.Model):
         Reset the items price state in the user cart
         """
         for item in self.orderitem_set.all():  # pylint: disable=no-member
-            if item.list_price and item.list_price != item.unit_cost:
+            if item.is_discounted:
                 item.unit_cost = item.list_price
                 item.save()
 
@@ -709,6 +709,17 @@ class OrderItem(TimeStampedModel):
         a pk of a subclass (inclusive) of OrderItem
         """
         return OrderItemSubclassPK(type(self), self.pk)
+
+    @property
+    def is_discounted(self):
+        """
+        Returns True if the item a discount coupon has been applied to the OrderItem and False otherwise.
+        Earlier, the OrderItems were stored with an empty list_price if a discount had not been applied.
+        Now we consider the item to be non discounted if list_price is None or list_price == unit_cost. In
+        these lines, an item is discounted if it's non-None and list_price and unit_cost mismatch.
+        This should work with both new and old records.
+        """
+        return self.list_price and self.list_price != self.unit_cost
 
     @property
     def single_item_receipt_template(self):
