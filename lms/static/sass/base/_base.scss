@@ -123,9 +123,9 @@ a, a:visited {
   @include clearfix();
   @include box-sizing(border-box);
   margin: 0 auto 0;
-  padding: ($baseline*2) 0;
+  padding: 0 0;                  // INARES: remove padding (before: "padding: ($baseline*2) 0")
   max-width: grid-width(12);
-  min-width: 760px;
+  min-width: 0;                  // INARES: remove min-width for responsive theme (before: "min-width: 760px")
   width: flex-grid(12);
 }
 

@@ -130,7 +130,7 @@ $sm-btn-linkedin: #0077b5;
     .toggle-form {
         @include box-sizing(border-box);
         max-width: 650px;
-        min-width: 400px;
+        min-width: 0;                  // INARES: remove min-width for responsive theme (before: "min-width: 400px")
         margin: 0 auto;
         padding-left: $baseline; // Don't want to override any top or bottom (CR)
         padding-right: $baseline // Don't want to override any top or bottom (CR)
@@ -481,10 +481,11 @@ $sm-btn-linkedin: #0077b5;
         background: tint($yellow,20%);
 
         .message-title {
-            @extend %t-title5;
+            @extend %t-title4;
             font-family: $sans-serif;
             margin: 0 0 ($baseline/4) 0;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
         .message-copy,

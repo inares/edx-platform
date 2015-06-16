@@ -131,7 +131,13 @@ header.global {
 
       &:last-child {
         > a {
-          padding: ($baseline/5) ($baseline/2);
+          /* ---------- INARES: modified ---------- */
+          // padding: ($baseline/5) ($baseline/2);
+          padding: 4px 8px 10px 8px;
+          height: 34px;
+          width: 30px;
+          text-align: center;
+          /* -------------------------------------- */
 
           &.shopping-cart {
             border-radius: 4px;
@@ -144,7 +150,16 @@ header.global {
     }
 
     a.user-link {
+<<<<<<< HEAD
       @include padding(5px, 2px, 10px, 10px);
+=======
+      /* ---------- INARES: modified ---------- */
+      //  @include padding(5px, 12px, 10px, 10px);
+      padding: 6px 12px 10px 10px;
+      height: 34px;
+      /* -------------------------------------- */
+
+>>>>>>> Modifications for responsive theme
       position: relative;
       text-transform: none;
       font-size: 14px;
@@ -154,9 +169,16 @@ header.global {
       .icon {
         display: inline-block;
         @include float(left);
-        @include margin(2px, 6px, -3px, 3px);
+
+        /* ---------- INARES: modified ---------- */
+        //  @include margin(2px, 6px, -3px, 3px);
+        margin: 1px 5px 0px 0px;
+        height: 34px;
+        /* -------------------------------------- */
+
         font-size: 1.2em;
         color: $m-gray;
+
       }
 
       .avatar {
