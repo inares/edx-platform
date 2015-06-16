@@ -175,7 +175,7 @@ class DashboardPage(PageObject):
         """
         return self.q(css='.dropdown-menu li a').text
 
-        def click_my_profile_link(self):
+        def click_profile_link(self):
             """
             Click on `Profile` link.
             """

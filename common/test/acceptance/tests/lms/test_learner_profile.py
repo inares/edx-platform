@@ -246,7 +246,7 @@ class OwnLearnerProfilePageTest(LearnerProfileTestMixin, WebAppTest):
         dashboard_page.visit()
         dashboard_page.click_username_dropdown()
         self.assertTrue('Profile' in dashboard_page.username_dropdown_link_text)
-        dashboard_page.click_my_profile_link()
+        dashboard_page.click_profile_link()
         my_profile_page = LearnerProfilePage(self.browser, username)
         my_profile_page.wait_for_page()
 
