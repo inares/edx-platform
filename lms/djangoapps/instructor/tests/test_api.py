@@ -102,13 +102,17 @@ REPORTS_DATA = (
         'instructor_api_endpoint': 'get_students_who_may_enroll',
         'task_api_endpoint': 'instructor_task.api.submit_calculate_may_enroll_csv',
         'extra_instructor_api_kwargs': {},
-    },
+    }
+)
+
+# ddt data for test cases involving executive summary report
+EXECUTIVE_SUMMARY_DATA = (
     {
-        'report_type': 'Executive Summary',
+        'report_type': 'executive summary',
         'instructor_api_endpoint': 'get_exec_summary_report',
         'task_api_endpoint': 'instructor_task.api.submit_executive_summary_report',
         'extra_instructor_api_kwargs': {}
-    }
+    },
 )
 
 
@@ -2551,9 +2555,30 @@ class TestInstructorAPILevelsDataDump(ModuleStoreTestCase, LoginEnrollmentTestCa
         success_status = "Your {report_type} report is being generated! You can view the status of the generation task in the 'Pending Instructor Tasks' section.".format(report_type=report_type)
         self.assertIn(success_status, response.content)
 
-    @ddt.data(*REPORTS_DATA)
+    @ddt.data(*EXECUTIVE_SUMMARY_DATA)
     @ddt.unpack
-    def test_calculate_report_csv_already_running(self, report_type, instructor_api_endpoint, task_api_endpoint, extra_instructor_api_kwargs):
+    def test_executive_summary_report_success(self, report_type, instructor_api_endpoint, task_api_endpoint, extra_instructor_api_kwargs):
+        kwargs = {'course_id': unicode(self.course.id)}
+        kwargs.update(extra_instructor_api_kwargs)
+        url = reverse(instructor_api_endpoint, kwargs=kwargs)
+
+        CourseFinanceAdminRole(self.course.id).add_users(self.instructor)
+        with patch(task_api_endpoint):
+            response = self.client.get(url, {})
+        success_status = "Your {report_type} report is being created." \
+                         " To view the status of the report, see the 'Pending Instructor Tasks'" \
+                         " section.".format(report_type=report_type)
+        self.assertIn(success_status, response.content)
+
+    @ddt.data(*EXECUTIVE_SUMMARY_DATA)
+    @ddt.unpack
+    def test_executive_summary_report_already_running(
+            self,
+            report_type,
+            instructor_api_endpoint,
+            task_api_endpoint,
+            extra_instructor_api_kwargs
+    ):
         kwargs = {'course_id': unicode(self.course.id)}
         kwargs.update(extra_instructor_api_kwargs)
         url = reverse(instructor_api_endpoint, kwargs=kwargs)
@@ -2562,7 +2587,10 @@ class TestInstructorAPILevelsDataDump(ModuleStoreTestCase, LoginEnrollmentTestCa
         with patch(task_api_endpoint) as mock:
             mock.side_effect = AlreadyRunningError()
             response = self.client.get(url, {})
-        already_running_status = "{report_type} report generation task is already in progress. Check the 'Pending Instructor Tasks' table for the status of the task. When completed, the report will be available for download in the table below.".format(report_type=report_type)
+        already_running_status = "An {report_type} report is currently in progress. To view the status of the report," \
+                                 " see the 'Pending Instructor Tasks' section. When completed, the report will be" \
+                                 " available for download in the table below. You will be able to download the" \
+                                 " report when it is complete.".format(report_type=report_type)
         self.assertIn(already_running_status, response.content)
 
     def test_get_distribution_no_feature(self):

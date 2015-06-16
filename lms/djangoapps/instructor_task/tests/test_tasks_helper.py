@@ -818,10 +818,10 @@ class TestExecutiveSummaryReport(TestReportMixin, InstructorTaskCourseTestCase):
             )
         report_store = ReportStore.from_config(config_name='FINANCIAL_REPORTS')
         expected_data = [
-            'Gross Revenue Collected to date:', '$1481.82',
-            'Gross Pending Revenue:', '$0.00',
-            'Average price paid:', '$296.36',
-            'Total seats bough using discount codes:', '<td>2</td>'
+            'Gross Revenue Collected', '$1481.82',
+            'Gross Revenue Pending', '$0.00',
+            'Average Price per Seat', '$296.36',
+            'Number of seats purchased using coupon codes', '<td>2</td>'
         ]
         self.assertDictContainsSubset({'attempted': 1, 'succeeded': 1, 'failed': 0}, result)
         self._verify_html_file_report(report_store, expected_data)

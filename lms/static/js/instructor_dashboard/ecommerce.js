@@ -48,7 +48,7 @@ var edx = edx || {};
                 });
              },
              error: function(std_ajax_err) {
-                $('#enrollment-report-request-response-error').text(gettext('Error generating grades. Please try again.'));
+                $('#enrollment-report-request-response-error').text(gettext('There was a problem creating the report. Select "Create Executive Summary" to try again.'));
                 return $("#enrollment-report-request-response-error").css({
                   "display": "block"
                 });
@@ -67,7 +67,7 @@ var edx = edx || {};
                 });
                },
              error: function(std_ajax_err) {
-                $('#exec-summary-report-request-response-error').text(gettext('Error generating grades. Please try again.'));
+                $('#exec-summary-report-request-response-error').text(gettext('There was a problem creating the report. Select "Create Executive Summary" to try again.'));
                 return $("#exec-summary-report-request-response-error").css({
                   "display": "block"
                 });

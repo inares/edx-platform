@@ -1168,7 +1168,7 @@ def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _ta
     )
 
     TASK_LOG.info(u'%s, Task type: %s, Starting task execution', task_info_string, action_name)
-    current_step = {'step': 'Gathering Executive Summary Report Information'}
+    current_step = {'step': 'Gathering executive summary report information'}
 
     TASK_LOG.info(
         u'%s, Task type: %s, Current step: %s, generating executive summary report',
@@ -1191,7 +1191,7 @@ def upload_exec_summary_report(_xmodule_instance_args, _entry_id, course_id, _ta
     )
 
     # By this point, we've got the data that we need to generate html report.
-    current_step = {'step': 'Uploading Executive Summary Enrollment Report html file.'}
+    current_step = {'step': 'Uploading executive summary report HTML file'}
     task_progress.update_task_state(extra_meta=current_step)
     TASK_LOG.info(u'%s, Task type: %s, Current step: %s', task_info_string, action_name, current_step)
 

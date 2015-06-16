@@ -1239,13 +1239,14 @@ def get_exec_summary_report(request, course_id):
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     try:
         instructor_task.api.submit_executive_summary_report(request, course_key)
-        status_response = _("Your Executive Summary report is being generated! "
-                            "You can view the status of the generation task in"
-                            " the 'Pending Instructor Tasks' section.")
+        status_response = _("Your executive summary report is being created. "
+                            "To view the status of the report, see the 'Pending Instructor Tasks' section.")
     except AlreadyRunningError:
-        status_response = _("An Executive Summary report generation task is already in progress. "
-                            "Check the 'Pending Instructor Tasks' table for the status of the task. "
-                            "When completed, the report will be available for download in the table below.")
+        status_response = _("An executive summary report is currently in progress. "
+                            "To view the status of the report, see the 'Pending Instructor Tasks' section. "
+                            "When completed, the report will be available for download in the table below. "
+                            "You will be able to download the report when it is complete."
+                            )
     return JsonResponse({
         "status": status_response
     })

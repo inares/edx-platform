@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Edx Executive Summary</title>
+<title>Executive Summary</title>
 <style type="text/css">
 body {
 	font-family: Arial, Helvetica, sans-serif;
@@ -32,61 +32,61 @@ h2 {
 			<table width="100%">
 
 				<tr>
-					<td width="300">${_("Course Start Date:")}</td>
+					<td width="300">${_("Course Start Date")}</td>
 					<td align="right"> ${start_date}</td>
 				</tr>
 				<tr>
-					<td width="300">${_("Course End Date:")}</td>
+					<td width="300">${_("Course End Date")}</td>
 					<td align="right"> ${end_date}</td>
 				</tr>
 				<tr>
-					<td width="300">${_("Report Generation Date:")}</td>
+					<td width="300">${_("Report Creation Date")}</td>
 					<td align="right"> ${report_generation_date}</td>
 			  </tr>
 				<tr>
-					<td width="300">${_("Total Seats:")}</td>
+					<td width="300">${_("Number of Seats")}</td>
 					<td align="right">${total_seats}</td>
 				</tr>
 				<tr>
-					<td width="300">${_("Total Enrollments:")}</td>
+					<td width="300">${_("Number of Enrollments")}</td>
 					<td align="right">${total_enrollments}</td>
 				</tr>
 				<tr>
-					<td>${_("Gross Revenue Collected to date:")}</td>
+					<td>${_("Gross Revenue Collected")}</td>
 					<td align="right">${currency}${"{0:0.2f}".format(gross_revenue)}</td>
 				</tr>
 				<tr>
-					<td>${_("Gross Pending Revenue:")}</td>
+					<td>${_("Gross Revenue Pending")}</td>
 					<td align="right">${currency}${"{0:0.2f}".format(gross_pending_revenue)}</td>
 				</tr>
 				<tr>
-					<td>${_("Total Enrollments Refunded:")}</td>
+					<td>${_("Number of Enrollment Refunds")}</td>
 					<td align="right">${total_seats_refunded}</td>
 				</tr>
 				<tr>
-					<td>${_("Total Amount Refunded:")}</td>
+					<td>${_("Amount Refunded")}</td>
 					<td align="right">${currency}${"{0:0.2f}".format(total_amount_refunded)}</td>
 				</tr>
 				<tr>
-					<td>${_("Average price paid:")}</td>
+					<td>${_("Average Price per Seat")}</td>
 					<td align="right">${currency}${"{0:0.2f}".format(average_paid_price)}</td>
 				</tr>
 			</table></td>
 	</tr>
 	<tr>
-		<td align="left" valign="top" class="box-bg"><h3>${_("Top Discount Codes used:")}</h3>
+		<td align="left" valign="top" class="box-bg"><h3>${_("Frequently Used Coupon Codes")}</h3>
 			<table width="500">
 				<tr>
-					<td>${_("Total seats bough using discount codes:")}</td>
+					<td>${_("Number of seats purchased using coupon codes")}</td>
 					<td>${total_seats_using_discount_codes['coupon__count']}</td>
 				</tr>
 			</table>
 			<table width="100%">
 
 					<th>${_("Rank")}</th>
-					<th>${_("Discount Code")}</th>
-					<th>${_("Discount %")}</th>
-					<th>${_("Times used")}</th>
+					<th>${_("Coupon Code")}</th>
+					<th>${_("Percent Discount %")}</th>
+					<th>${_("Times Used")}</th>
         %for i, discount_code_data in enumerate(discount_codes_data):
 				<tr>
 					<td align="center">${i+1}</td>
@@ -98,34 +98,34 @@ h2 {
 			</table></td>
 	</tr>
 	<tr>
-		<td align="left" valign="top" class="box-bg"><h3>${_("Bulk vs Single Self Purchases")}</h3>
+		<td align="left" valign="top" class="box-bg"><h3>${_("Bulk and Single Seat Purchases")}</h3>
 			<table width="100%">
 				<tr>
-					<td>${_("Total seats bought via single seat purchase:")}</td>
+					<td>${_("Number of seats purchased individually")}</td>
 					<td align="right">${total_self_purchase_seats}</td>
 				</tr>
 				<tr>
-					<td>${_("Total seats bought via bulk purchase:")}</td>
+					<td>${_("Number of seats purchased in bulk")}</td>
 					<td align="right">${total_bulk_purchase_seats}</td>
 				</tr>
 				<tr>
-					<td>${_("Total seats bought via invoice:")}</td>
+					<td>${_("Number of seats purchased with invoices")}</td>
 					<td align="right">${total_invoiced_seats}</td>
 				</tr>
 				<tr>
-					<td>${_("Total unused bulk purchase seats (revenue at risk):")}</td>
+					<td>${_("Unused bulk purchase seats (revenue at risk)")}</td>
 					<td align="right">${unused_bulk_purchase_code_count}</td>
 				</tr>
 				<tr>
-					<td>${_("Percentage of total seats bought via single seat purchase:")}</td>
+					<td>${_("Percentage of seats purchased individually")}</td>
 					<td align="right">${"{0:0.2f}".format(self_purchases_percentage)}%</td>
 				</tr>
 				<tr>
-					<td>${_("Percentage of total seats via bulk purchase:")}</td>
+					<td>${_("Percentage of seats purchased in bulk")}</td>
 					<td align="right">${"{0:0.2f}".format(bulk_purchases_percentage)}%</td>
 				</tr>
 				<tr>
-					<td>${_("Percentage of total seats via invoice:")}</td>
+					<td>${_("Percentage of seats purchased with invoices")}</td>
 					<td align="right">${"{0:0.2f}".format(invoice_purchases_percentage)}%</td>
 				</tr>
 			</table></td>
