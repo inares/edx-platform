@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
-from opaque_keys.edx.locator import CourseLocator
+from opaque_keys.edx.keys import CourseKey
 
 from discussion_api.api import (
     create_comment,
@@ -64,7 +64,7 @@ class CourseView(_ViewMixin, DeveloperErrorViewMixin, APIView):
     """
     def get(self, request, course_id):
         """Implements the GET method as described in the class docstring."""
-        course_key = CourseLocator.from_string(course_id)  # TODO: which class is right?
+        course_key = CourseKey.from_string(course_id)  # TODO: which class is right?
         return Response(get_course(request, course_key))
 
 
@@ -96,7 +96,7 @@ class CourseTopicsView(_ViewMixin, DeveloperErrorViewMixin, APIView):
     """
     def get(self, request, course_id):
         """Implements the GET method as described in the class docstring."""
-        course_key = CourseLocator.from_string(course_id)
+        course_key = CourseKey.from_string(course_id)
         return Response(get_course_topics(request, course_key))
 
 
