@@ -150,16 +150,11 @@ header.global {
     }
 
     a.user-link {
-<<<<<<< HEAD
-      @include padding(5px, 2px, 10px, 10px);
-=======
       /* ---------- INARES: modified ---------- */
-      //  @include padding(5px, 12px, 10px, 10px);
+      //  @include padding(5px, 2px, 10px, 10px);
       padding: 6px 12px 10px 10px;
       height: 34px;
       /* -------------------------------------- */
-
->>>>>>> Modifications for responsive theme
       position: relative;
       text-transform: none;
       font-size: 14px;
